@@ -74,7 +74,6 @@ class CreateBot:
 
 		question = response['choices'][0]['message']['content']
 		self.messages.append({'role':'assistant','content':question})
-		print(question)
 
 		return question
 
@@ -114,24 +113,7 @@ class CreateBot:
 		for item in self.messages:
 			full_text += item['content']
 		return full_text
-
-
-# spanish_girl_prompt = """
-# You are a flirting tutor and we are engaging in conversational role play. You are playing the role of a young english-speaking spanish girl.
-# The conversation should be in English.
-# You should be able to rate my input in terms of how suitable a response it is for increasing romantic interest, given your age and nationality. 
-# The highest rating should be for answers that illicit a romantic connection, are suitable for my age and nationality and fit with the flow of the conversation well. 
-# The lowest rating might be inappropriate, dull, plain, unsuitable for my age or nationality or out of context for the flow of the conversation
-
-# """
-
-# spanish_girl = CreateBot(system_prompt = spanish_girl_prompt)
-
-# criteria = "how suitable a response it is for increasing romantic interest, given your age and nationality."
-
-# spanish_girl.chat()
-
-
+		
 
 criteria = "how suitable does this answer suggest the candidate is for the role"
 
@@ -150,3 +132,20 @@ def get_prompt(role,company):
 # interviewer = CreateBot(system_prompt = job_interviewer_prompt)
 
 # interviewer.chat()
+
+
+
+# spanish_girl_prompt = """
+# You are a flirting tutor and we are engaging in conversational role play. You are playing the role of a young english-speaking spanish girl.
+# The conversation should be in English.
+# You should be able to rate my input in terms of how suitable a response it is for increasing romantic interest, given your age and nationality. 
+# The highest rating should be for answers that illicit a romantic connection, are suitable for my age and nationality and fit with the flow of the conversation well. 
+# The lowest rating might be inappropriate, dull, plain, unsuitable for my age or nationality or out of context for the flow of the conversation
+
+# """
+
+# spanish_girl = CreateBot(system_prompt = spanish_girl_prompt)
+
+# criteria = "how suitable a response it is for increasing romantic interest, given your age and nationality."
+
+# spanish_girl.chat()

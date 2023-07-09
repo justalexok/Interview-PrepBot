@@ -58,9 +58,6 @@ def rate_answer():
 	session['messages'].append({"role":"user","content": answer})
 	session.modified = True
 
-	print('printing just session messages to see if answer has been apended')
-	print(session['messages'])
-
 	return jsonify(rating=rating)
 
 @app.route("/ask_question", methods=['POST'])
@@ -81,8 +78,6 @@ def ask_question():
 	next_question = interviewer.get_question()
 	session['messages'].append({"role":"assistant","content": next_question})
 	session.modified = True
-
-	print(f"Next Question inside app.py: {next_question}")
 
 	return jsonify(next_question = next_question)
 
