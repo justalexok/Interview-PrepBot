@@ -1,0 +1,176 @@
+<!-- myapp/templates/myapp/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interview PrepBot</title>
+  <link rel="icon" href="icon_small" type="image/jpg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+  <style>
+    #questionLabel {
+      margin-top: 10px; /* Add some margin at the top */
+      margin-left: 20px;
+    }
+    #responseTextbox {
+      display: none;
+      width: calc(100% - 120px);  /* Subtracting 10px to account for button margin */
+      height: 200px;  /* Set the desired height */
+      resize: none;  /* Prevent resizing of the text box */
+      border: 1px solid gray;  /* Add border to the text box */
+      padding: 5px;  /* Add some padding */
+      margin-top: 20px; /* Add some margin at the top */
+      margin-left: 20px;
+    }
+    #submitButton {
+      display: none;
+      margin-top: 20px; /* Add some margin at the top */
+      margin-left: 20px;
+      padding: 5px;
+    }
+    #ratingLabel {
+      display: none;
+      margin-top: 20px; /* Add some margin at the top */
+      margin-left: 20px;
+      color: red;
+    }
+    #nextQuestionButton {
+      display: none;
+      margin-top: 12px; /* Add some margin at the top */
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  </div>
+    <div class="jumbotron">
+    <h1 class="display-4">Interview prep tool!</h1>
+    <p class="lead">Enter the company and role you're applying for and hit go!</p>
+    <hr class="my-4">
+    <p>You'll be rated on how suitable the bot thinks you are for the role given your answer.</p>
+    <div class="row">
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Company" id="companyInput">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Role" id="roleInput">
+      </div>
+      <div class="col">
+        <a class="btn btn-primary btn" href="#" role="button" id="beginButton">Go!</a>
+      </div>
+    </div>
+  </div>
+  
+  <div>
+    <label id="questionLabel"></label>
+  </div> 
+  <div>
+    <textarea id="responseTextbox"></textarea>
+    <button id="submitButton" onclick="submitResponse()">Submit</button>
+
+  </div>
+  <div>
+    <label id="ratingLabel"></label>
+  </div>
+  <div>
+    <button id="nextQuestionButton" onclick="nextQ()">Next Question</button>
+
+  
+  <script>
+
+      // Get the "Let's begin" button element
+    const beginButton = document.getElementById('beginButton');
+
+    // Add an event listener to the button
+    beginButton.addEventListener('click', submitForm);
+
+    function submitForm() {
+      var company = document.getElementById('companyInput').value;
+      var role = document.getElementById('roleInput').value;
+      
+      fetch('/begin_interview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+        },
+        body: JSON.stringify({ role: role, company: company }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        var questionLabel = document.getElementById('questionLabel');
+        questionLabel.textContent = data.firstQ; // Set the content of questionLabel to firstQ
+
+        var responseTextbox = document.getElementById('responseTextbox');
+        responseTextbox.value = '';  // Clear any existing value in responseTextbox
+        responseTextbox.style.display = 'block';  // Make responseTextbox visible
+        responseTextbox.removeAttribute('readonly');  // Allow user input in responseTextbox
+
+        var submitButton = document.getElementById('submitButton');
+        submitButton.style.display = 'block';  // Make submitButton visible
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+  <script>
+    function submitResponse() {
+      var userReponse = document.getElementById("responseTextbox").value;
+      var submitButton = document.getElementById('submitButton');
+      submitButton.disabled = true;  // Disable the submitButton
+
+      fetch('/rate_answer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+        },
+        body: JSON.stringify({answer: userReponse }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        var ratingLabel = document.getElementById('ratingLabel');
+        ratingLabel.style.display = 'block';
+        ratingLabel.textContent = data.rating; // Set the content of questionLabel to firstQ
+
+        nextQuestionButton.style.display = 'block';
+
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+  <script>
+    function nextQ() {
+        var questionLabel = document.getElementById('questionLabel');
+        questionLabel.textContent = '';
+
+        var responseTextbox = document.getElementById('responseTextbox');
+        responseTextbox.value = '';  // Clear any existing value in responseTextbox
+        ratingLabel.textContent = '';
+
+        var submitButton = document.getElementById('submitButton');
+        submitButton.disabled = false;  // Enable the submitButton
+
+        fetch('/ask_question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+        },
+        body: {},
+      })
+      .then(response => response.json())
+      .then(data => {
+        var questionLabel = document.getElementById('questionLabel');
+        questionLabel.textContent = data.next_question; // Set the content of questionLabel to firstQ
+
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+  </script>
+</body>
+</html>
