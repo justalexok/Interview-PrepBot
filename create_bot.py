@@ -6,7 +6,7 @@ import re
 import tiktoken
 
 load_dotenv()
-openai.api_key = os.getenv('MyKey')
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 class CreateBot:
 
