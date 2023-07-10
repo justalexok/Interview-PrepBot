@@ -55,6 +55,10 @@ def rate_answer():
 	rating = interviewer.rate_answer(answer)
 	print(rating)
 
+	if len(messages) > 20:
+		messages.pop(1)
+		messages.pop(1)
+
 	session['messages'].append({"role":"user","content": answer})
 	session.modified = True
 
